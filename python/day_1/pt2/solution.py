@@ -2,8 +2,11 @@ import sys
 import logging
 from collections import Counter
 
+
 def solve():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s"
+    )
 
     logging.info("Reading input lines from stdin...")
     lines = sys.stdin.read().strip().splitlines()
@@ -27,11 +30,14 @@ def solve():
     similarity_score = 0
     for l_val in left_list:
         similarity_score += l_val * freq_right.get(l_val, 0)
-        logging.debug(f"Value={l_val}, RightCount={freq_right.get(l_val, 0)}, "
-                      f"CurrentSum={l_val * freq_right.get(l_val, 0)}")
+        logging.debug(
+            f"Value={l_val}, RightCount={freq_right.get(l_val, 0)}, "
+            f"CurrentSum={l_val * freq_right.get(l_val, 0)}"
+        )
 
     logging.info(f"Final similarity score: {similarity_score}")
     print(similarity_score)
+
 
 if __name__ == "__main__":
     solve()

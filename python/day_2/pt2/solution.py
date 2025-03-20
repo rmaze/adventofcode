@@ -1,5 +1,6 @@
 import sys
 
+
 def is_strictly_safe(levels):
     """
     Checks if the levels are strictly increasing or strictly decreasing
@@ -12,7 +13,7 @@ def is_strictly_safe(levels):
 
     diffs = []
     for i in range(len(levels) - 1):
-        diff = levels[i+1] - levels[i]
+        diff = levels[i + 1] - levels[i]
         # Must be strictly positive or strictly negative (non-zero)
         # and magnitude in [1..3]
         if diff == 0 or abs(diff) > 3:
@@ -23,6 +24,7 @@ def is_strictly_safe(levels):
     all_pos = all(d > 0 for d in diffs)
     all_neg = all(d < 0 for d in diffs)
     return all_pos or all_neg
+
 
 def is_safe_with_dampener(levels):
     """
@@ -36,11 +38,12 @@ def is_safe_with_dampener(levels):
     # 2) Try removing each level once
     for i in range(len(levels)):
         # Create a new list with the i-th element removed
-        modified = levels[:i] + levels[i+1:]
+        modified = levels[:i] + levels[i + 1 :]
         if is_strictly_safe(modified):
             return True
 
     return False
+
 
 def solve():
     lines = sys.stdin.read().strip().splitlines()
@@ -52,6 +55,7 @@ def solve():
             safe_count += 1
 
     print(safe_count)
+
 
 if __name__ == "__main__":
     solve()

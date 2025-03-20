@@ -3,6 +3,7 @@ import re
 
 PATTERN = re.compile(r"mul\((\d{1,3}),(\d{1,3})\)")
 
+
 def solve():
     data = sys.stdin.read()
     matches = PATTERN.findall(data)
@@ -14,6 +15,7 @@ def solve():
         total_sum += x * y
 
     print(total_sum)
+
 
 if __name__ == "__main__":
     solve()

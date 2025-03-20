@@ -4,6 +4,7 @@ import re
 # One pattern to match exactly "do()" or "don't()" or "mul(X,Y)" with 1-3 digit integers.
 PATTERN = re.compile(r"(?:do\(\)|don't\(\)|mul\(\d{1,3},\d{1,3}\))")
 
+
 def solve():
     # Read the entire input
     data = sys.stdin.read()
@@ -27,12 +28,13 @@ def solve():
             # e.g. "mul(44,46)" – parse out the numbers
             if mul_enabled:
                 # Extract "44,46" from "mul(44,46)"
-                inside = str(token[4:-1])      # remove "mul(" and the trailing ")"
+                inside = str(token[4:-1])  # remove "mul(" and the trailing ")"
                 x_str, y_str = inside.split(",")
                 x, y = int(x_str), int(y_str)
                 total_sum += x * y
 
     print(total_sum)
+
 
 if __name__ == "__main__":
     solve()

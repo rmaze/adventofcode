@@ -1,8 +1,11 @@
 import sys
 import logging
 
+
 def solve():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s"
+    )
 
     logging.info("Reading input lines from stdin...")
     lines = sys.stdin.read().strip().splitlines()
@@ -33,6 +36,7 @@ def solve():
 
     logging.info(f"Total distance: {total_distance}")
     print(total_distance)
+
 
 if __name__ == "__main__":
     solve()
