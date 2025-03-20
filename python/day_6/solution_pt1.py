@@ -1,54 +1,74 @@
-def parse_map(grid):
-    guard_position = None
-    guard_direction = None
+def solve():
+    import sys
 
-    directions = {"^": (-1, 0), "v": (1, 0), "<": (0, -1), ">": (0, 1)}
+    # Read all lines (the entire map)
+    lines = [line.rstrip("\n") for line in sys.stdin.readlines()]
 
-    for r, row in enumerate(grid):
-        for c, cell in enumerate(row):
-            if cell in directions:
-                guard_position = (r, c)
-                guard_direction = directions[cell]
-                grid[r] = grid[r][:c] + "." + grid[r][c + 1 :]  # Remove guard symbol
+    # Dimensions
+    R = len(lines)
+    C = len(lines[0]) if R > 0 else 0
+
+    # Directions for convenience
+    # We'll map the guard symbol to (dr, dc)
+    dir_map = {"^": (-1, 0), "v": (1, 0), "<": (0, -1), ">": (0, 1)}
+
+    # Function to turn right (dr, dc) -> new (dr, dc)
+    def turn_right(direction):
+        (dr, dc) = direction
+        # Up -> Right
+        if (dr, dc) == (-1, 0):
+            return (0, 1)
+        # Right -> Down
+        if (dr, dc) == (0, 1):
+            return (1, 0)
+        # Down -> Left
+        if (dr, dc) == (1, 0):
+            return (0, -1)
+        # Left -> Up
+        if (dr, dc) == (0, -1):
+            return (-1, 0)
+
+    # Find guard's starting position and direction
+    start_r = start_c = None
+    direction = None
+
+    for r in range(R):
+        for c in range(C):
+            ch = lines[r][c]
+            if ch in dir_map:
+                start_r, start_c = r, c
+                direction = dir_map[ch]
                 break
-        if guard_position:
+        if start_r is not None:
             break
 
-    return grid, guard_position, guard_direction
-
-
-def simulate_patrol(grid, start_pos, start_dir):
-    rows, cols = len(grid), len(grid[0])
+    # Set of visited cells
     visited = set()
-    pos = start_pos
-    direction = start_dir
+    visited.add((start_r, start_c))
 
-    turn_right = {(0, 1): (1, 0), (1, 0): (0, -1), (0, -1): (-1, 0), (-1, 0): (0, 1)}
+    # Current position
+    r, c = start_r, start_c
+    dr, dc = direction
 
-    while 0 <= pos[0] < rows and 0 <= pos[1] < cols:
-        visited.add(pos)
-        new_pos = (pos[0] + direction[0], pos[1] + direction[1])
+    # Simulate until we leave the map
+    while 0 <= r < R and 0 <= c < C:
+        # Check cell in front
+        front_r = r + dr
+        front_c = c + dc
 
-        if (
-            0 <= new_pos[0] < rows
-            and 0 <= new_pos[1] < cols
-            and grid[new_pos[0]][new_pos[1]] != "#"
-        ):
-            pos = new_pos  # Move forward
+        # If the next front cell is inside the map and is '#', turn right
+        if 0 <= front_r < R and 0 <= front_c < C and lines[front_r][front_c] == "#":
+            dr, dc = turn_right((dr, dc))
         else:
-            direction = turn_right[direction]  # Turn right
+            # Step forward
+            r, c = front_r, front_c
+            # If still inside the map, record this new cell
+            if 0 <= r < R and 0 <= c < C:
+                visited.add((r, c))
 
-    return len(visited)
-
-
-def main():
-    from sys import stdin
-
-    grid = [line.strip() for line in stdin.readlines()]
-    grid, start_pos, start_dir = parse_map(grid)
-    result = simulate_patrol(grid, start_pos, start_dir)
-    print(result)
+    # Print the number of distinct positions visited
+    print(len(visited))
 
 
 if __name__ == "__main__":
-    main()
+    solve()
