@@ -7,7 +7,7 @@ def parse_disk_map(disk_map_str: str) -> list:
     blocks = []
     file_id = 0
     is_file_length = True
-    
+
     for ch in disk_map_str:
         length = int(ch)
         if is_file_length:
@@ -16,7 +16,7 @@ def parse_disk_map(disk_map_str: str) -> list:
             file_id += 1
         else:
             # 'length' is free space
-            blocks.extend(['.'] * length)
+            blocks.extend(["."] * length)
         is_file_length = not is_file_length
 
     return blocks
@@ -31,25 +31,25 @@ def compact_disk(blocks: list) -> None:
     while True:
         # Find the index of the rightmost file block (any position not '.')
         try:
-            rightmost_file_idx = max(i for i, b in enumerate(blocks) if b != '.')
+            rightmost_file_idx = max(i for i, b in enumerate(blocks) if b != ".")
         except ValueError:
             # No file blocks at all; nothing to compact
             break
-        
+
         # Find the leftmost '.' (free space) that is to the left of this rightmost file block
         leftmost_dot_idx = None
         for i in range(rightmost_file_idx):
-            if blocks[i] == '.':
+            if blocks[i] == ".":
                 leftmost_dot_idx = i
                 break
-        
+
         if leftmost_dot_idx is None:
             # No free space lies to the left of a file block => fully compacted
             break
-        
+
         # Move one file block from the rightmost position to the leftmost gap
         blocks[leftmost_dot_idx] = blocks[rightmost_file_idx]
-        blocks[rightmost_file_idx] = '.'
+        blocks[rightmost_file_idx] = "."
 
 
 def compute_checksum(blocks: list) -> int:
@@ -59,7 +59,7 @@ def compute_checksum(blocks: list) -> int:
     """
     checksum = 0
     for pos, val in enumerate(blocks):
-        if val != '.':
+        if val != ".":
             checksum += pos * val
     return checksum
 
