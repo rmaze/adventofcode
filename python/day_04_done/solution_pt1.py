@@ -1,60 +1,56 @@
-import sys
+def main() -> int:
+    """
+    Reads a grid from 'input.txt' and counts the number of occurrences
+    of the target word "XMAS" in all 8 directions starting from a cell containing 'X'.
 
-
-def solve():
-    grid = [line.strip() for line in sys.stdin if line.strip()]
+    Returns:
+        int: The total count of occurrences of "XMAS" found in the grid.
+    """
+    with open("input.txt", "r", encoding="utf-8") as file:
+        grid: list[str] = [line.strip() for line in file if line.strip()]
     if not grid:
-        print(0)
-        return
+        return 0
 
-    rows = len(grid)
-    cols = len(grid[0])
-    target = "XMAS"
-    t_len = len(target)
-
-    # (Δrow, Δcol) for the 8 directions
-    directions = [
-        (-1, 0),  # up
-        (1, 0),  # down
-        (0, -1),  # left
-        (0, 1),  # right
-        (-1, -1),  # diagonal up-left
-        (-1, 1),  # diagonal up-right
-        (1, -1),  # diagonal down-left
-        (1, 1),  # diagonal down-right
+    num_rows: int = len(grid)
+    num_cols: int = len(grid[0])
+    target: str = "XMAS"
+    target_len: int = len(target)
+    directions: list[tuple[int, int]] = [
+        (-1, 0),
+        (1, 0),
+        (0, -1),
+        (0, 1),
+        (-1, -1),
+        (-1, 1),
+        (1, -1),
+        (1, 1),
     ]
 
-    # Collect coordinates of all 'X' cells
-    x_positions = []
-    for r in range(rows):
-        for c in range(cols):
-            if grid[r][c] == "X":
-                x_positions.append((r, c))
+    x_positions: list[tuple[int, int]] = [
+        (r, c) for r in range(num_rows) for c in range(num_cols) if grid[r][c] == "X"
+    ]
 
-    count = 0
-
-    # For each 'X' cell, try to match the rest of "MAS" in all directions
-    for r, c in x_positions:
+    count: int = 0
+    for start_row, start_col in x_positions:
         for dr, dc in directions:
-            # End cell = start + (t_len - 1) steps in (dr, dc)
-            end_r = r + dr * (t_len - 1)
-            end_c = c + dc * (t_len - 1)
-            # Check boundaries
-            if 0 <= end_r < rows and 0 <= end_c < cols:
-                # Collect letters along this direction
-                found = True
-                rr, cc = r, c
-                for i in range(t_len):
-                    if grid[rr][cc] != target[i]:
-                        found = False
-                        break
-                    rr += dr
-                    cc += dc
-                if found:
-                    count += 1
+            end_row = start_row + dr * (target_len - 1)
+            end_col = start_col + dc * (target_len - 1)
+            if not (0 <= end_row < num_rows and 0 <= end_col < num_cols):
+                continue
+            found: bool = True
+            row, col = start_row, start_col
+            for char in target:
+                if grid[row][col] != char:
+                    found = False
+                    break
+                row += dr
+                col += dc
+            if found:
+                count += 1
 
-    print(count)
+    return count
 
 
 if __name__ == "__main__":
-    solve()
+    result: int = main()
+    print(result)
