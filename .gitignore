@@ -1,2 +1,4 @@
 target
 cargo.lock
+.ruff_cache
+.venv
