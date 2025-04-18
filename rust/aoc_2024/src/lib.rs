@@ -62,48 +62,51 @@ where
         })
         .sum()
 }
-
 pub fn is_strictly_safe(levels: &[u8]) -> bool {
     if levels.len() < 2 {
         return true;
     }
 
-    let diffs: Vec<i16> = levels
-        .windows(2)
-        .map(|pair| pair[1] as i16 - pair[0] as i16)
-        .collect();
+    let mut first_diff: Option<i16> = None;
 
-    for &d in &diffs {
-        if d == 0 || d.abs() > 3 {
+    for pair in levels.windows(2) {
+        let diff = pair[1] as i16 - pair[0] as i16;
+
+        if diff == 0 || diff.abs() > 3 {
             return false;
+        }
+
+        match first_diff {
+            None => first_diff = Some(diff.signum()),
+            Some(sign) if diff.signum() != sign => return false,
+            _ => {}
         }
     }
 
-    let all_positive = diffs.iter().all(|&d| d > 0);
-    let all_negative = diffs.iter().all(|&d| d < 0);
-
-    all_positive || all_negative
+    true
 }
 pub fn is_safe_report(levels: &[u8]) -> bool {
     if levels.len() < 2 {
         return false;
     }
 
-    let diffs: Vec<i16> = levels
-        .windows(2)
-        .map(|pair| pair[1] as i16 - pair[0] as i16)
-        .collect();
+    let mut first_diff: Option<i16> = None;
 
-    for &d in &diffs {
-        if d == 0 || d.abs() < 1 || d.abs() > 3 {
+    for pair in levels.windows(2) {
+        let diff = pair[1] as i16 - pair[0] as i16;
+
+        if diff == 0 || diff.abs() < 1 || diff.abs() > 3 {
             return false;
+        }
+
+        match first_diff {
+            None => first_diff = Some(diff.signum()),
+            Some(sign) if diff.signum() != sign => return false,
+            _ => {}
         }
     }
 
-    let all_positive = diffs.iter().all(|&d| d > 0);
-    let all_negative = diffs.iter().all(|&d| d < 0);
-
-    all_positive || all_negative
+    true
 }
 pub fn is_safe_with_dampener(levels: &[u8]) -> bool {
     if is_strictly_safe(levels) {
@@ -111,11 +114,37 @@ pub fn is_safe_with_dampener(levels: &[u8]) -> bool {
     }
 
     for i in 0..levels.len() {
-        let mut modified = Vec::with_capacity(levels.len() - 1);
-        modified.extend_from_slice(&levels[..i]);
-        modified.extend_from_slice(&levels[i + 1..]);
+        let mut prev: Option<u8> = None;
+        let mut valid = true;
+        let mut first_diff: Option<i16> = None;
 
-        if is_strictly_safe(&modified) {
+        for (j, &val) in levels.iter().enumerate() {
+            if j == i {
+                continue;
+            }
+
+            if let Some(p) = prev {
+                let diff = val as i16 - p as i16;
+
+                if diff == 0 || diff.abs() > 3 {
+                    valid = false;
+                    break;
+                }
+
+                match first_diff {
+                    None => first_diff = Some(diff.signum()),
+                    Some(sign) if diff.signum() != sign => {
+                        valid = false;
+                        break;
+                    }
+                    _ => {}
+                }
+            }
+
+            prev = Some(val);
+        }
+
+        if valid {
             return true;
         }
     }
