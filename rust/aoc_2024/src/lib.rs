@@ -47,6 +47,21 @@ pub fn similarity_score(input: &str) -> i32 {
         .sum()
 }
 
+pub fn solve_day_02<F>(input: &str, predicate: F) -> i32
+where
+    F: Fn(&[i32]) -> bool,
+{
+    input
+        .lines()
+        .map(|line| {
+            let levels: Vec<i32> = line
+                .split_whitespace()
+                .map(|s| s.parse::<i32>().unwrap())
+                .collect();
+            predicate(&levels) as i32
+        })
+        .sum()
+}
 pub fn is_strictly_safe(levels: &[i32]) -> bool {
     if levels.len() < 2 {
         return true;
