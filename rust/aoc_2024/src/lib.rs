@@ -47,27 +47,31 @@ pub fn similarity_score(input: &str) -> i32 {
         .sum()
 }
 
-pub fn solve_day_02<F>(input: &str, predicate: F) -> i32
+pub fn solve_day_02<F>(input: &str, predicate: F) -> u16
 where
-    F: Fn(&[i32]) -> bool,
+    F: Fn(&[u8]) -> bool,
 {
     input
         .lines()
         .map(|line| {
-            let levels: Vec<i32> = line
+            let levels: Vec<u8> = line
                 .split_whitespace()
-                .map(|s| s.parse::<i32>().unwrap())
+                .map(|s| s.parse::<u8>().unwrap())
                 .collect();
-            predicate(&levels) as i32
+            predicate(&levels) as u16
         })
         .sum()
 }
-pub fn is_strictly_safe(levels: &[i32]) -> bool {
+
+pub fn is_strictly_safe(levels: &[u8]) -> bool {
     if levels.len() < 2 {
         return true;
     }
 
-    let diffs: Vec<i32> = levels.windows(2).map(|pair| pair[1] - pair[0]).collect();
+    let diffs: Vec<i16> = levels
+        .windows(2)
+        .map(|pair| pair[1] as i16 - pair[0] as i16)
+        .collect();
 
     for &d in &diffs {
         if d == 0 || d.abs() > 3 {
@@ -80,12 +84,15 @@ pub fn is_strictly_safe(levels: &[i32]) -> bool {
 
     all_positive || all_negative
 }
-pub fn is_safe_report(levels: &[i32]) -> bool {
+pub fn is_safe_report(levels: &[u8]) -> bool {
     if levels.len() < 2 {
         return false;
     }
 
-    let diffs: Vec<i32> = levels.windows(2).map(|pair| pair[1] - pair[0]).collect();
+    let diffs: Vec<i16> = levels
+        .windows(2)
+        .map(|pair| pair[1] as i16 - pair[0] as i16)
+        .collect();
 
     for &d in &diffs {
         if d == 0 || d.abs() < 1 || d.abs() > 3 {
@@ -98,7 +105,7 @@ pub fn is_safe_report(levels: &[i32]) -> bool {
 
     all_positive || all_negative
 }
-pub fn is_safe_with_dampener(levels: &[i32]) -> bool {
+pub fn is_safe_with_dampener(levels: &[u8]) -> bool {
     if is_strictly_safe(levels) {
         return true;
     }
